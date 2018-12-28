@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<settings>
+		<!-- 开启驼峰命名规则 -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		<!--控制台输出SQL语句 -->
+		<setting name="logImpl" value="STDOUT_LOGGING" />
+		<!-- 如果 null 被当作值来传递，对于所有可能为空的列，JDBC Type 是需要的。 -->
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	
+	<typeAliases>
+		<!-- 起别名 -->
+		<package name="com.diagens.bean"/>
+	</typeAliases>
+
+</configuration>

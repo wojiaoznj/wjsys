@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.diagens.dao.SurveyDao">
+    <!-- 分页查询问卷-->
+    <select id="getSurvey" resultType="SurveyBean">
+        SELECT survey_id,survey_type,survey_name,create_time,survey_status,user_id
+        FROM survey
+        where user_id=#{userid} and survey_status!=3
+    </select>
+
+    <!-- 新增问卷-->
+    <insert id="insertSurvey" useGeneratedKeys="true" parameterType="SurveyBean">
+        insert into survey (survey_type,survey_name,user_id,create_time)
+        VALUES(#{surveyType},#{surveyName},#{userInfoList[0].userId},#{createTime})
+    </insert>
+
+    <!-- 删除问卷-->
+    <delete id="deleteSurvey">
+        DELETE FROM survey where user_id=#{userId} and survey_id=#{surveyId}
+    </delete>
+
+    <!-- 修改问卷状态-->
+    <update id="updateSurveyStatus">
+        UPDATE survey SET survey_status=#{status}
+        where user_id=#{userId} and survey_id=#{surveyId}
+        and survey_status=#{surveyStatus};
+    </update>
+
+    <!-- 查询问卷及其题目的信息-->
+    <select id="getSurveyWithQuestion" resultMap="surveyResult">
+        SELECT s.survey_id,s.survey_type,s.survey_name,s.survey_explain,s.`survey_status`,
+        sq.question_id,sq.question_type,sq.question_title,sq.question_explain,sq.is_required,sq.question_sort,sq.is_edit
+        FROM survey s LEFT OUTER JOIN survey_question sq
+        ON s.`survey_id`=sq.`survey_id`
+        WHERE s.`survey_id`=#{surveyId} AND s.`user_id`=#{userId}
+    </select>
+
+    <resultMap id="surveyResult" type="SurveyBean" autoMapping="true">
+        <association property="questionBean" javaType="SurveyQuestionBean"
+                     autoMapping="true"></association>
+    </resultMap>
+</mapper>
