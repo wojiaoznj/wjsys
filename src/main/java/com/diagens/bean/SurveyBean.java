@@ -24,14 +24,14 @@ public class SurveyBean {
     //题目数量
     private Integer questionNum;
     //问卷题目信息
-    private SurveyQuestionBean questionBean=new SurveyQuestionBean();
+    private List<SurveyQuestionBean> questionBean=new ArrayList<>();
     //用户信息
-    private List<UserInfoBean> userInfoList=new ArrayList<>();
+    private UserInfoBean userInfo=new UserInfoBean();
 
     public SurveyBean() {
     }
 
-    public SurveyBean(Integer surveyId, String surveyType, String surveyName, String surveyExplain, Date createTime, Integer surveyStatus, Integer questionNum, SurveyQuestionBean questionBean, List<UserInfoBean> userInfoList) {
+    public SurveyBean(Integer surveyId, String surveyType, String surveyName, String surveyExplain, Date createTime, Integer surveyStatus, Integer questionNum, List<SurveyQuestionBean> questionBean, UserInfoBean userInfo) {
         this.surveyId = surveyId;
         this.surveyType = surveyType;
         this.surveyName = surveyName;
@@ -40,7 +40,7 @@ public class SurveyBean {
         this.surveyStatus = surveyStatus;
         this.questionNum = questionNum;
         this.questionBean = questionBean;
-        this.userInfoList = userInfoList;
+        this.userInfo = userInfo;
     }
 
     public Integer getSurveyId() {
@@ -99,20 +99,20 @@ public class SurveyBean {
         this.questionNum = questionNum;
     }
 
-    public SurveyQuestionBean getQuestionBean() {
+    public List<SurveyQuestionBean> getQuestionBean() {
         return questionBean;
     }
 
-    public void setQuestionBean(SurveyQuestionBean questionBean) {
+    public void setQuestionBean(List<SurveyQuestionBean> questionBean) {
         this.questionBean = questionBean;
     }
 
-    public List<UserInfoBean> getUserInfoList() {
-        return userInfoList;
+    public UserInfoBean getUserInfo() {
+        return userInfo;
     }
 
-    public void setUserInfoList(List<UserInfoBean> userInfoList) {
-        this.userInfoList = userInfoList;
+    public void setUserInfo(UserInfoBean userInfo) {
+        this.userInfo = userInfo;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class SurveyBean {
                 ", surveyStatus=" + surveyStatus +
                 ", questionNum=" + questionNum +
                 ", questionBean=" + questionBean +
-                ", userInfoList=" + userInfoList +
+                ", userInfo=" + userInfo +
                 '}';
     }
 }

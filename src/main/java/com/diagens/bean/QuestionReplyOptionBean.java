@@ -74,4 +74,14 @@ public class QuestionReplyOptionBean {
     public void setQroVotes(Integer qroVotes) {
         this.qroVotes = qroVotes;
     }
+
+    @Override
+    public String toString() {
+        return "QuestionReplyOptionBean{" +
+                "qroId=" + qroId +
+                ", sqBean=" + sqBean +
+                ", qroContent='" + qroContent + '\'' +
+                ", qroVotes=" + qroVotes +
+                '}';
+    }
 }

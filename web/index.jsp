@@ -11,6 +11,13 @@
     <title>Title</title>
 </head>
 <body>
-   <h1>Hello,World</h1>
+
+<form id="form" action="http://localhost:8080/diagens/survey/updateSurveyWithQuestion" method="post">
+    <input type="text" name="questionBean[0].questionId" value="2"/>
+    <input type="text" name="questionBean[1].questionId" value="3"/><br/>
+    <input type="text" name="questionBean[0].questionTitle" value="你对人生的看法？"/>
+    <input type="text" name="questionBean[1].questionTitle" value="你对工作的看法？"/><br/>
+    <input type="submit">
+</form>
 </body>
 </html>

@@ -12,12 +12,12 @@
     <!-- 新增问卷-->
     <insert id="insertSurvey" useGeneratedKeys="true" parameterType="SurveyBean">
         insert into survey (survey_type,survey_name,user_id,create_time)
-        VALUES(#{surveyType},#{surveyName},#{userInfoList[0].userId},#{createTime})
+        VALUES(#{surveyType},#{surveyName},#{userInfo.userId},#{createTime})
     </insert>
 
-    <!-- 删除问卷-->
+    <!-- 删除问卷 将问卷的状态修改为3 废弃状态-->
     <delete id="deleteSurvey">
-        DELETE FROM survey where user_id=#{userId} and survey_id=#{surveyId}
+        UPDATE survey set survey_status=3 where user_id=#{userId} and survey_id=#{surveyId}
     </delete>
 
     <!-- 修改问卷状态-->
@@ -27,17 +27,134 @@
         and survey_status=#{surveyStatus};
     </update>
 
+    <!-- 给问卷题目上锁-->
+    <update id="updateQuestionStatus">
+        UPDATE survey_question SET is_edit=1 where survey_id=#{surveyId}
+    </update>
+
     <!-- 查询问卷及其题目的信息-->
     <select id="getSurveyWithQuestion" resultMap="surveyResult">
         SELECT s.survey_id,s.survey_type,s.survey_name,s.survey_explain,s.`survey_status`,
-        sq.question_id,sq.question_type,sq.question_title,sq.question_explain,sq.is_required,sq.question_sort,sq.is_edit
+        sq.question_id,sq.question_type,sq.question_title,sq.question_explain,sq.is_required,sq.is_edit
         FROM survey s LEFT OUTER JOIN survey_question sq
         ON s.`survey_id`=sq.`survey_id`
         WHERE s.`survey_id`=#{surveyId} AND s.`user_id`=#{userId}
+        ORDER BY sq.`question_sort`
     </select>
 
-    <resultMap id="surveyResult" type="SurveyBean" autoMapping="true">
-        <association property="questionBean" javaType="SurveyQuestionBean"
+    <!-- 修改问卷名字或说明 -->
+    <update id="updateSurvey">
+       UPDATE survey
+        <set>
+            <if test="surveyBean.surveyName!=null">
+               survey_name=#{surveyBean.surveyName},
+            </if>
+            <if test="surveyBean.surveyExplain!=null">
+                survey_explain=#{surveyBean.surveyExplain},
+            </if>
+        </set>
+        where user_Id=#{userId} and survey_id=#{surveyBean.surveyId}
+    </update>
+
+    <!-- 添加问卷题目-->
+    <insert id="insertSurveyQuestion" useGeneratedKeys="true" parameterType="SurveyBean" keyProperty="questionId">
+        INSERT INTO survey_question
+        (survey_id,question_type,question_title,question_explain,is_required,question_sort,is_edit)
+        VALUES
+        <foreach collection="list" item="sqb" index="index" separator=",">
+            (#{sqb.surveyBean.surveyId},#{sqb.questionType},#{sqb.questionTitle},
+            #{sqb.questionExplain},#{sqb.isRequired},
+            #{sqb.questionSort},#{sqb.isEdit})
+        </foreach>
+    </insert>
+
+    <!-- 添加题目回复选项-->
+    <insert id="insertQuestionReply" useGeneratedKeys="true" parameterType="QuestionReplyOptionBean">
+        INSERT INTO question_reply_option
+        (question_id,qro_content)
+        VALUES
+        <foreach collection="list" item="qro" index="index" separator=",">
+            (#{qro.sqBean.questionId},#{qro.qroContent})
+        </foreach>
+    </insert>
+
+    <!-- 修改问卷题目-->
+    <update id="updateSurveyQuestion">
+        UPDATE survey_question
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="question_type =case" suffix="end,">
+                <foreach collection="list" item="sqb" index="index">
+                    <if test="sqb.questionType!=null">
+                        when question_id=#{sqb.questionId} then #{sqb.questionType}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="question_title =case" suffix="end,">
+                <foreach collection="list" item="sqb" index="index">
+                    <if test="sqb.questionTitle!=null">
+                        when question_id=#{sqb.questionId} then #{sqb.questionTitle}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="question_explain =case" suffix="end,">
+                <foreach collection="list" item="sqb" index="index">
+                    <if test="sqb.questionExplain!=null">
+                        when question_id=#{sqb.questionId} then #{sqb.questionExplain}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="is_required =case" suffix="end,">
+                <foreach collection="list" item="sqb" index="index">
+                    <if test="sqb.isRequired!=null">
+                        when question_id=#{sqb.questionId} then #{sqb.isRequired}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where question_id in
+        <foreach collection="list" index="index" item="sqb" separator="," open="(" close=")">
+            #{sqb.questionId}
+        </foreach>
+        and is_edit=0
+    </update>
+
+    <!-- 修改题目回复选项-->
+    <update id="updateQuestionReply">
+        UPDATE question_reply_option
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="question_id =case" suffix="end,">
+                <foreach collection="list" item="qro" index="index">
+                    <if test="qro.sqBean.questionId!=null">
+                        when qro_id=#{qro.qroId} then #{qro.sqBean.questionId}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="qro_content =case" suffix="end,">
+                <foreach collection="list" item="qro" index="index">
+                    <if test="qro.qroContent!=null">
+                        when qro_id=#{qro.qroId} then #{qro.qroContent}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where qro_id in
+        <foreach collection="list" index="index" item="qro" separator="," open="(" close=")">
+            #{qro.qroId}
+        </foreach>
+    </update>
+
+    <!-- 批量删除问卷题目-->
+    <delete id="deleteSurveyWithQuestion">
+        DELETE from survey_question where question_id IN
+        <foreach collection="list" item="id"  open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and is_edit=0
+    </delete>
+
+    <!-- 问卷以及问卷题目-->
+    <resultMap id="surveyResult" type="SurveyQuestionBean" autoMapping="true">
+        <association property="surveyBean" javaType="SurveyBean"
                      autoMapping="true"></association>
     </resultMap>
 </mapper>

@@ -1,5 +1,8 @@
 package com.diagens.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author ZNJ
  * @create 2018-12-27 10:30
@@ -20,7 +23,7 @@ public class UserInfoBean {
     //第三方平台的名字
     private String openType;
     //问卷信息
-    private SurveyBean surveyBean=new SurveyBean();
+    private List<SurveyBean> surveyBean=new ArrayList<>();
 
     public UserInfoBean() {
     }
@@ -29,7 +32,7 @@ public class UserInfoBean {
         this.userId = userId;
     }
 
-    public UserInfoBean(Integer userId, String userName, String userPassWord, String userNickName, Integer userSex, String openId, String openType, SurveyBean surveyBean) {
+    public UserInfoBean(Integer userId, String userName, String userPassWord, String userNickName, Integer userSex, String openId, String openType, List<SurveyBean> surveyBean) {
         this.userId = userId;
         this.userName = userName;
         this.userPassWord = userPassWord;
@@ -46,61 +49,5 @@ public class UserInfoBean {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserPassWord() {
-        return userPassWord;
-    }
-
-    public void setUserPassWord(String userPassWord) {
-        this.userPassWord = userPassWord;
-    }
-
-    public String getUserNickName() {
-        return userNickName;
-    }
-
-    public void setUserNickName(String userNickName) {
-        this.userNickName = userNickName;
-    }
-
-    public Integer getUserSex() {
-        return userSex;
-    }
-
-    public void setUserSex(Integer userSex) {
-        this.userSex = userSex;
-    }
-
-    public String getOpenId() {
-        return openId;
-    }
-
-    public void setOpenId(String openId) {
-        this.openId = openId;
-    }
-
-    public String getOpenType() {
-        return openType;
-    }
-
-    public void setOpenType(String openType) {
-        this.openType = openType;
-    }
-
-    public SurveyBean getSurveyBean() {
-        return surveyBean;
-    }
-
-    public void setSurveyBean(SurveyBean surveyBean) {
-        this.surveyBean = surveyBean;
     }
 }

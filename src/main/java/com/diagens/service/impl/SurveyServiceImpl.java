@@ -1,5 +1,6 @@
 package com.diagens.service.impl;
 
+import com.diagens.bean.QuestionReplyOptionBean;
 import com.diagens.bean.SurveyBean;
 import com.diagens.bean.SurveyQuestionBean;
 import com.diagens.dao.SurveyDao;
@@ -51,10 +52,7 @@ public class SurveyServiceImpl implements SurveyService{
         int deleteCount=surveyDao.deleteSurvey(surveyId,userid);
 
         //没有删除记录
-        if(deleteCount<0){
-            return new SurveyResult<>(API.ERRORCODE,API.ERROR);
-        }
-         return new SurveyResult<>(API.SUCCESSCODE,API.SUCCESS);
+        return API.judgeEffect(deleteCount);
     }
 
     @Override
@@ -62,11 +60,12 @@ public class SurveyServiceImpl implements SurveyService{
         if(StringUtils.isEmpty(surveyId)||surveyStatus<0||surveyStatus>3){
             return new SurveyResult<>(API.ERRORCODE,API.ERROR);
         }
-        int updateCount=surveyDao.updateSurveyStatus(userid,surveyId,surveyStatus,status);
-        if(updateCount<0){
-            return new SurveyResult<>(API.ERRORCODE,API.ERROR);
+        //如果是草稿状态，则是发布问卷，需要将该问卷题目上锁
+        if(surveyStatus==0){
+            surveyDao.updateQuestionStatus(surveyId);
         }
-        return new SurveyResult<>(API.SUCCESSCODE,API.SUCCESS);
+        int updateCount=surveyDao.updateSurveyStatus(userid,surveyId,surveyStatus,status);
+        return API.judgeEffect(updateCount);
     }
 
     @Override
@@ -74,33 +73,62 @@ public class SurveyServiceImpl implements SurveyService{
         if(StringUtils.isEmpty(userid)){
             return new SurveyResult<>(API.ERRORCODE,API.ERROR);
         }
-        List<SurveyBean> surveyBeans=surveyDao.getSurveyWithQuestion(userid,surveyId);
+        List<SurveyQuestionBean> surveyBeans=surveyDao.getSurveyWithQuestion(userid,surveyId);
         if(StringUtils.isEmpty(surveyBeans)){
             return new SurveyResult<>(API.ERRORCODE,API.ERROR);
         }
         Map<Object,Object> m=new HashMap<>();
         List<Map<Object,Object>> list=new ArrayList<>();
         List<Map<Object,Object>> list1=new ArrayList<>();
-        SurveyBean survey=surveyBeans.get(0);
+        SurveyBean survey=surveyBeans.get(0).getSurveyBean();
         m.put("surveyId",survey.getSurveyId());
         m.put("surveyType",survey.getSurveyType());
         m.put("surveyName",survey.getSurveyName());
         m.put("surverExplain",survey.getSurveyExplain());
         m.put("surverStatus",survey.getSurveyStatus());
-        for(SurveyBean surveyBean:surveyBeans){
-            SurveyQuestionBean sqb=surveyBean.getQuestionBean();
+        for(SurveyQuestionBean sqb:surveyBeans){
             Map<Object,Object> map=new HashMap<>();
             map.put("questionId",sqb.getQuestionId());
             map.put("questionType",sqb.getQuestionType());
             map.put("questionTitle",sqb.getQuestionTitle());
             map.put("questionExplain",sqb.getQuestionExplain());
             map.put("isRequired",sqb.getIsRequired());
-            map.put("questionSort",sqb.getQuestionSort());
             map.put("isEdit",sqb.getIsEdit());
             list1.add(map);
         }
         m.put("question",list1);
         list.add(m);
         return new SurveyResult<List<Map<Object,Object>>>(API.SUCCESSCODE,list,API.SUCCESS);
+    }
+
+    @Override
+    public int updateSurvey(SurveyBean surveyBean, Integer USERID) {
+        return surveyDao.updateSurvey(surveyBean,USERID);
+    }
+
+    @Override
+    public int insertSurveyQuestion(List<SurveyQuestionBean> sqb) {
+        return surveyDao.insertSurveyQuestion(sqb);
+    }
+
+    @Override
+    public int updateSurveyQuestion(List<SurveyQuestionBean> sqb) {
+        return surveyDao.updateSurveyQuestion(sqb);
+    }
+
+    @Override
+    public SurveyResult<String> deleteSurveyWithQuestion(List<Integer> questionIds) {
+        int deleteCount=surveyDao.deleteSurveyWithQuestion(questionIds);
+        return API.judgeEffect(deleteCount);
+    }
+
+    @Override
+    public int insertQuestionReply(List<QuestionReplyOptionBean> insertQuestionList) {
+        return surveyDao.insertQuestionReply(insertQuestionList);
+    }
+
+    @Override
+    public int updateQuestionReply(List<QuestionReplyOptionBean> updateQuestionList) {
+        return surveyDao.updateQuestionReply(updateQuestionList);
     }
 }

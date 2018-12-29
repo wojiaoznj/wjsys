@@ -1,5 +1,7 @@
 package com.diagens.bean;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,6 +23,10 @@ public class SurveyQuestionBean {
     private Integer questionSort;
     //是否能修改此题目，已发布过的不能修改 0 能修改 1 不能修改
     private Integer isEdit;
+    //问卷信息
+    private SurveyBean surveyBean=new SurveyBean();
+    //题目回复选项信息
+    private List<QuestionReplyOptionBean> qro=new ArrayList<>();
 
     public SurveyQuestionBean() {
     }
@@ -35,6 +41,29 @@ public class SurveyQuestionBean {
         this.isEdit = isEdit;
     }
 
+    public SurveyQuestionBean(Integer questionId, Integer questionType, String questionTitle, String questionExplain, Integer isRequired, Integer questionSort, Integer isEdit, SurveyBean surveyBean) {
+        this.questionId = questionId;
+        this.questionType = questionType;
+        this.questionTitle = questionTitle;
+        this.questionExplain = questionExplain;
+        this.isRequired = isRequired;
+        this.questionSort = questionSort;
+        this.isEdit = isEdit;
+        this.surveyBean = surveyBean;
+    }
+
+    public SurveyQuestionBean(Integer questionId, Integer questionType, String questionTitle, String questionExplain, Integer isRequired, Integer questionSort, Integer isEdit, SurveyBean surveyBean, List<QuestionReplyOptionBean> qro) {
+        this.questionId = questionId;
+        this.questionType = questionType;
+        this.questionTitle = questionTitle;
+        this.questionExplain = questionExplain;
+        this.isRequired = isRequired;
+        this.questionSort = questionSort;
+        this.isEdit = isEdit;
+        this.surveyBean = surveyBean;
+        this.qro = qro;
+    }
+
     @Override
     public String toString() {
         return "SurveyQuestionBean{" +
@@ -45,6 +74,8 @@ public class SurveyQuestionBean {
                 ", isRequired=" + isRequired +
                 ", questionSort=" + questionSort +
                 ", isEdit=" + isEdit +
+                ", surveyBean=" + surveyBean +
+                ", qro=" + qro +
                 '}';
     }
 
@@ -102,5 +133,21 @@ public class SurveyQuestionBean {
 
     public void setIsEdit(Integer isEdit) {
         this.isEdit = isEdit;
+    }
+
+    public SurveyBean getSurveyBean() {
+        return surveyBean;
+    }
+
+    public void setSurveyBean(SurveyBean surveyBean) {
+        this.surveyBean = surveyBean;
+    }
+
+    public List<QuestionReplyOptionBean> getQro() {
+        return qro;
+    }
+
+    public void setQro(List<QuestionReplyOptionBean> qro) {
+        this.qro = qro;
     }
 }

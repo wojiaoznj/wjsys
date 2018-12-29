@@ -1,6 +1,8 @@
 package com.diagens.service;
 
+import com.diagens.bean.QuestionReplyOptionBean;
 import com.diagens.bean.SurveyBean;
+import com.diagens.bean.SurveyQuestionBean;
 import com.diagens.dto.SurveyResult;
 import com.github.pagehelper.PageInfo;
 
@@ -21,4 +23,16 @@ public interface SurveyService {
     SurveyResult updateSurveyStatus(Integer userid, Integer surveyId, Integer surveyStatus, Integer status);
 
     SurveyResult<List<Map<Object,Object>>> getSurveyWithQuestion(Integer userid, Integer surveyId);
+
+    int updateSurvey(SurveyBean surveyBean, Integer USERID);
+
+    int insertSurveyQuestion(List<SurveyQuestionBean> surveyBean);
+
+    int updateSurveyQuestion(List<SurveyQuestionBean> surveyBean);
+
+    SurveyResult<String> deleteSurveyWithQuestion(List<Integer> questionIds);
+
+    int insertQuestionReply(List<QuestionReplyOptionBean> insertQuestionList);
+
+    int updateQuestionReply(List<QuestionReplyOptionBean> updateQuestionList);
 }

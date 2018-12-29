@@ -1,6 +1,7 @@
 package com.diagens.util;
 
 import com.diagens.bean.SurveyBean;
+import com.diagens.dto.SurveyResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,36 +26,11 @@ public  class API {
     //用户的登录Id
     public static Integer USERID=1;
 
-
-    //问卷选择属性输出
-    public static List<Map<Object,Object>> selectProperty(List<SurveyBean> surveyBeans){
-        List<Map<Object,Object>> list=new ArrayList<>();
-        for(SurveyBean surveyBean:surveyBeans){
-            Map<Object,Object> map=new HashMap<>();
-            map.put("surveyType",surveyBean.getSurveyType());
-            map.put("surveyName",surveyBean.getSurveyName());
-            map.put("createTime",surveyBean.getCreateTime());
-            map.put("surveyId",surveyBean.getSurveyId());
-            map.put("surveyStatus",surveyBean.getSurveyStatus());
-            map.put("userId",API.USERID);
-            list.add(map);
+    //判断影响的行数
+    public static SurveyResult judgeEffect(int effectCount){
+        if (effectCount<=0){
+            return new SurveyResult(ERRORCODE,ERROR);
         }
-        return list;
-    }
-
-    //判断问卷状态
-    public static Integer judgeStatus(Integer oldStatus){
-        Integer newStatus=0;
-        if(oldStatus==0){
-            //草稿状态变为运行状态
-            newStatus=1;
-        }else if(oldStatus==1){
-            //运行状态变为暂停状态
-            newStatus=2;
-        }else if(oldStatus==2){
-            //暂停状态变为运行状态
-            newStatus=1;
-        }
-        return newStatus;
+        return new SurveyResult(SUCCESSCODE,SUCCESS);
     }
 }
