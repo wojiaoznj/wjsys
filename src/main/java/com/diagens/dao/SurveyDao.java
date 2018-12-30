@@ -22,6 +22,8 @@ public interface SurveyDao {
 
     List<SurveyQuestionBean> getSurveyWithQuestion(@Param("userId")Integer userid, @Param("surveyId")Integer surveyId);
 
+    List<SurveyQuestionBean> getSurveyQuestionWithReply(@Param("userId")Integer userid, @Param("surveyId")Integer surveyId);
+
     void updateQuestionStatus(Integer surveyId);
 
     int updateSurvey(@Param("surveyBean") SurveyBean surveyBean,@Param("userId") Integer userId);
@@ -35,4 +37,6 @@ public interface SurveyDao {
     int insertQuestionReply(List<QuestionReplyOptionBean> insertQuestionList);
 
     int updateQuestionReply(List<QuestionReplyOptionBean> updateQuestionList);
+
+    int deleteQuestionReply(List<Integer> replyIds);
 }

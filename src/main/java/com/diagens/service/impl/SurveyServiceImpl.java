@@ -68,6 +68,43 @@ public class SurveyServiceImpl implements SurveyService{
         return API.judgeEffect(updateCount);
     }
 
+    public SurveyResult<List<Map<Object,Object>>> getSurveyQuestionWithReply(Integer userid, Integer surveyId){
+        if(StringUtils.isEmpty(userid)){
+            return new SurveyResult<>(API.ERRORCODE,API.ERROR);
+        }
+        List<SurveyQuestionBean> questionBeans=surveyDao.getSurveyQuestionWithReply(userid,surveyId);
+        if(StringUtils.isEmpty(questionBeans)){
+            return new SurveyResult<>(API.ERRORCODE,API.ERROR);
+        }
+        Map<Object,Object> map=new HashMap<>();
+        List<Map<Object,Object>> list=new ArrayList<>();
+        List<Map<Object,Object>> list1=new ArrayList<>();
+        List<Map<Object,Object>> list2=new ArrayList<>();
+        SurveyBean surveyBean=questionBeans.get(0).getSurveyBean();
+        map.put("surveyId",surveyBean.getSurveyId());
+        map.put("surveyType",surveyBean.getSurveyType());
+        map.put("surveyName",surveyBean.getSurveyName());
+        map.put("surverExplain",surveyBean.getSurveyExplain());
+        for(QuestionReplyOptionBean qros:replyOptionBeans){
+            Map<Object,Object> map1=new HashMap<>();
+            Map<Object,Object> map2=new HashMap<>();
+            SurveyQuestionBean sqs=qros.getSqBean();
+            map1.put("questionId",sqs.getQuestionId());
+            map1.put("questionType",sqs.getQuestionType());
+            map1.put("questionTitle",sqs.getQuestionTitle());
+            map1.put("questionExplain",sqs.getQuestionExplain());
+            map1.put("isRequired",sqs.getIsRequired());
+            list1.add(map1);
+            map2.put("qroId",qros.getQroId());
+            map2.put("qroContent",qros.getQroContent());
+            list2.add(map2);
+            map1.put("reply",list2);
+        }
+        map.put("question",list1);
+        list.add(map);
+        return new SurveyResult<List<Map<Object,Object>>>(API.SUCCESSCODE,list,API.SUCCESS);
+    }
+
     @Override
     public SurveyResult<List<Map<Object,Object>>> getSurveyWithQuestion(Integer userid, Integer surveyId) {
         if(StringUtils.isEmpty(userid)){
@@ -119,6 +156,12 @@ public class SurveyServiceImpl implements SurveyService{
     @Override
     public SurveyResult<String> deleteSurveyWithQuestion(List<Integer> questionIds) {
         int deleteCount=surveyDao.deleteSurveyWithQuestion(questionIds);
+        return API.judgeEffect(deleteCount);
+    }
+
+    @Override
+    public SurveyResult<String> deleteQuestionReply(List<Integer> replyIds) {
+        int deleteCount=surveyDao.deleteQuestionReply(replyIds);
         return API.judgeEffect(deleteCount);
     }
 

@@ -152,8 +152,36 @@
         and is_edit=0
     </delete>
 
+    <!-- 批量删除题目回复-->
+    <delete id="deleteQuestionReply">
+        DELETE from question_reply_option where qro_id IN
+        <foreach collection="list" item="id"  open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 查询问卷和问卷题目和题目回复选项-->
+    <select id="getSurveyQuestionWithReply" resultMap="surveyWithQuestionResult">
+        SELECT s.survey_id,s.survey_type,s.survey_name,s.survey_explain,
+        sq.question_id,sq.question_type,sq.question_title,sq.question_explain,sq.is_required,
+        qro.qro_id,qro.qro_content
+        FROM survey s LEFT OUTER JOIN survey_question sq ON s.`survey_id`=sq.`survey_id`
+                      LEFT OUTER JOIN question_reply_option qro ON sq.`question_id`=qro.`question_id`
+        WHERE s.`user_id`=#{userId} AND s.`survey_id`=#{surveyId}
+    </select>
+
+
     <!-- 问卷以及问卷题目-->
     <resultMap id="surveyResult" type="SurveyQuestionBean" autoMapping="true">
+        <association property="surveyBean" javaType="SurveyBean"
+                     autoMapping="true"></association>
+    </resultMap>
+
+    <!-- 问卷和问卷题目以及题目回复选项-->
+    <resultMap id="surveyWithQuestionResult" type="getSurveyQuestionWithReply" autoMapping="true">
+        <association property="qro" javaType="QuestionReplyOptionBean"
+                     autoMapping="true">
+        </association>
         <association property="surveyBean" javaType="SurveyBean"
                      autoMapping="true"></association>
     </resultMap>

@@ -230,4 +230,26 @@ public class SurveyController {
             return new SurveyResult<>(API.ERRORCODE, API.ERROR);
         }
     }
+
+    //批量删除题目回复
+    @RequestMapping(value = "/deleteQuestionReply", method = RequestMethod.POST)
+    @ResponseBody
+    public SurveyResult<String> deleteQuestionReply(@RequestParam(value = "replyIds") List<Integer> replyIds) {
+        try {
+            return surveyService.deleteQuestionReply(replyIds);
+        } catch (Exception e) {
+            return new SurveyResult<>(API.ERRORCODE, API.ERROR);
+        }
+    }
+
+    //生成问卷
+    @RequestMapping("getSurveyQuestionWithReply")
+    @ResponseBody
+    public SurveyResult<List<Map<Object,Object>>> getSurveyQuestionWithReply(Integer surveyId){
+        try {
+            return surveyService.getSurveyQuestionWithReply(API.USERID, surveyId);
+        } catch (Exception e) {
+            return new SurveyResult<>(API.ERRORCODE, API.ERROR);
+        }
+    }
 }

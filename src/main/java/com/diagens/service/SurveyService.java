@@ -24,6 +24,8 @@ public interface SurveyService {
 
     SurveyResult<List<Map<Object,Object>>> getSurveyWithQuestion(Integer userid, Integer surveyId);
 
+    SurveyResult<List<Map<Object,Object>>> getSurveyQuestionWithReply(Integer userid, Integer surveyId);
+
     int updateSurvey(SurveyBean surveyBean, Integer USERID);
 
     int insertSurveyQuestion(List<SurveyQuestionBean> surveyBean);
@@ -31,6 +33,8 @@ public interface SurveyService {
     int updateSurveyQuestion(List<SurveyQuestionBean> surveyBean);
 
     SurveyResult<String> deleteSurveyWithQuestion(List<Integer> questionIds);
+
+    SurveyResult<String> deleteQuestionReply(List<Integer> replyIds);
 
     int insertQuestionReply(List<QuestionReplyOptionBean> insertQuestionList);
 
