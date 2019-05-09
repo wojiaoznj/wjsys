@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.diagens.dao.AnswerDao">
+    <!-- 新增答卷-->
+    <insert id="insertAnswer" useGeneratedKeys="true" parameterType="AnswerBean" keyProperty="answerId">
+        insert into answer (survey_id,user_id,answer_start,answer_person,answer_time)
+        VALUES(#{surveyBean.surveyId},#{uiBean.userId},#{answerStart},#{answerPerson},#{answerTime})
+    </insert>
+
+    <!-- 新增答卷回复-->
+    <insert id="insertAnswerReply" useGeneratedKeys="true" parameterType="ReplyBean">
+        INSERT INTO reply(answer_id,question_id,qro_ids,reply_content)
+        VALUES
+        <foreach collection="list" item="reply" separator=",">
+            (#{reply.answerBean.answerId},#{reply.sqBean.questionId},#{reply.qroIds},#{reply.replyContent})
+        </foreach>
+    </insert>
+
+    <!-- 答卷列表-->
+    <select id="getAnswer" resultType="AnswerBean">
+        SELECT answer_id,survey_id,answer_start,answer_person,answer_time
+        FROM answer WHERE survey_id=#{surveyId}
+    </select>
+
+    <!-- 生成答卷-->
+    <select id="getAnswerDetail" resultMap="surveyWithAnswer">
+        SELECT s.survey_id,s.survey_type,s.survey_name,s.survey_explain,
+        sq.question_id,sq.question_type,sq.question_title,sq.question_explain,sq.is_required,
+        qro.qro_id,qro.qro_content,
+        a.answer_person,a.answer_time,a.answer_id,
+        r.reply_content,r.qro_ids,r.reply_id,r.question_id
+        FROM survey s LEFT OUTER JOIN survey_question sq ON s.`survey_id`=sq.`survey_id`
+        LEFT OUTER JOIN question_reply_option qro ON sq.`question_id`=qro.`question_id`
+        LEFT OUTER JOIN answer a ON s.`survey_id`=a.`survey_id`
+        LEFT OUTER JOIN reply r ON r.`question_id`=sq.`question_id` AND r.`answer_id`=a.`answer_id`
+        WHERE a.`answer_id`=#{answerId}
+    </select>
+
+    <!-- 查询答题人数-->
+    <select id="getQuestionNums" parameterType="int" resultType="java.util.HashMap">
+         SELECT COUNT(*) AS question_nums,sq.question_id
+         FROM survey_question sq,reply r
+         WHERE sq.`question_id`=r.`question_id`
+         AND sq.`survey_id`=#{surveyId}
+         GROUP BY sq.question_id
+    </select>
+
+    <!-- 统计分析-->
+    <select id="getAnalysis" resultMap="questionWithReply">
+        SELECT sq.question_id,sq.question_type,sq.question_title,
+        qro.qro_content,qro.`question_id`,qro.qro_id,r.qro_ids,r.`reply_id`
+        FROM survey_question sq LEFT OUTER JOIN question_reply_option qro
+        ON sq.`question_id`=qro.`question_id`
+                                LEFT OUTER JOIN reply r
+        ON sq.`question_id`=r.`question_id`
+        WHERE sq.`survey_id`=#{surveyId}
+        ORDER BY sq.`question_sort`
+    </select>
+
+    <!-- 列出文本内容-->
+    <select id="getReplyContent" resultMap="answerWithQuestion">
+        SELECT a.answer_start,r.reply_content
+        FROM answer a LEFT OUTER JOIN reply r
+        ON a.`answer_id`=r.`answer_id`
+        LEFT OUTER JOIN survey_question sq
+        ON r.`question_id`=sq.`question_id`
+        WHERE a.`survey_id`=#{surveyId} AND sq.`question_type`=2
+    </select>
+            
+    <!-- 答卷和题目信息-->
+    <resultMap id="answerWithQuestion" type="ReplyBean" autoMapping="true">
+        <association property="answerBean" javaType="AnswerBean"
+                     autoMapping="true"></association>
+    </resultMap>
+    
+    <!-- 题目和题目回复信息-->
+    <resultMap id="questionWithReply" type="ReplyBean" autoMapping="true">
+        <association property="sqBean" javaType="SurveyQuestionBean"
+                     autoMapping="true">
+            <association property="qro" javaType="QuestionReplyOptionBean"
+                         autoMapping="true"></association>
+        </association>
+    </resultMap>
+
+    <!-- 问卷和答卷的详细信息-->
+    <resultMap id="surveyWithAnswer" type="SurveyBean" autoMapping="true">
+        <association property="questionBean" javaType="SurveyQuestionBean"
+                     autoMapping="true">
+            <association property="qro" javaType="QuestionReplyOptionBean"
+                         autoMapping="true"></association>
+        </association>
+        <association property="answerBeans" javaType="AnswerBean"
+                     autoMapping="true">
+            <association property="replyBeans" javaType="ReplyBean"
+                         autoMapping="true">
+            </association>
+        </association>
+    </resultMap>
+</mapper>

@@ -77,6 +77,7 @@ public class SurveyServiceImpl implements SurveyService{
             return new SurveyResult<>(API.ERRORCODE,API.ERROR);
         }
         Map<Object,Object> map=new HashMap<>();
+        Map<Object,Object> map1=new HashMap<>();
         List<Map<Object,Object>> list=new ArrayList<>();
         List<Map<Object,Object>> list1=new ArrayList<>();
         List<Map<Object,Object>> list2=new ArrayList<>();
@@ -85,20 +86,24 @@ public class SurveyServiceImpl implements SurveyService{
         map.put("surveyType",surveyBean.getSurveyType());
         map.put("surveyName",surveyBean.getSurveyName());
         map.put("surverExplain",surveyBean.getSurveyExplain());
-        for(QuestionReplyOptionBean qros:replyOptionBeans){
-            Map<Object,Object> map1=new HashMap<>();
-            Map<Object,Object> map2=new HashMap<>();
-            SurveyQuestionBean sqs=qros.getSqBean();
-            map1.put("questionId",sqs.getQuestionId());
-            map1.put("questionType",sqs.getQuestionType());
-            map1.put("questionTitle",sqs.getQuestionTitle());
-            map1.put("questionExplain",sqs.getQuestionExplain());
-            map1.put("isRequired",sqs.getIsRequired());
-            list1.add(map1);
-            map2.put("qroId",qros.getQroId());
-            map2.put("qroContent",qros.getQroContent());
-            list2.add(map2);
-            map1.put("reply",list2);
+        for(SurveyQuestionBean sqs:questionBeans){
+            if(!map1.containsValue(sqs.getQuestionId())){
+                map1=new HashMap<>();
+                list2=new ArrayList<>();
+                map1.put("questionId",sqs.getQuestionId());
+                map1.put("questionType",sqs.getQuestionType());
+                map1.put("questionTitle",sqs.getQuestionTitle());
+                map1.put("questionExplain",sqs.getQuestionExplain());
+                map1.put("isRequired",sqs.getIsRequired());
+                list1.add(map1);
+            }
+            for(QuestionReplyOptionBean qros:sqs.getQro()){
+                Map<Object,Object> map2=new HashMap<>();
+                map2.put("qroId",qros.getQroId());
+                map2.put("qroContent",qros.getQroContent());
+                list2.add(map2);
+                map1.put("reply",list2);
+            }
         }
         map.put("question",list1);
         list.add(map);
@@ -111,7 +116,7 @@ public class SurveyServiceImpl implements SurveyService{
             return new SurveyResult<>(API.ERRORCODE,API.ERROR);
         }
         List<SurveyQuestionBean> surveyBeans=surveyDao.getSurveyWithQuestion(userid,surveyId);
-        if(StringUtils.isEmpty(surveyBeans)){
+        if(surveyBeans.size()<=0){
             return new SurveyResult<>(API.ERRORCODE,API.ERROR);
         }
         Map<Object,Object> m=new HashMap<>();
@@ -174,4 +179,6 @@ public class SurveyServiceImpl implements SurveyService{
     public int updateQuestionReply(List<QuestionReplyOptionBean> updateQuestionList) {
         return surveyDao.updateQuestionReply(updateQuestionList);
     }
+
 }
+

@@ -18,5 +18,12 @@ public class SurveyTest {
 
     @Test
     public void test1(){
+        List<Map<Object,Object>> list=new ArrayList<>();
+        Map<Object,Object> map=new HashMap<>();
+        map.put(1,1);
+        map.put(2,2);
+        list.add(map);
+        Map<Object,Object> map1=new HashMap<>();
+        map1.put(1,1);
     }
 }

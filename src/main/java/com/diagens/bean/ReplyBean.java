@@ -14,37 +14,19 @@ public class ReplyBean {
    //题目的信息
    private SurveyQuestionBean sqBean=new SurveyQuestionBean();
    //题目回答选项的ID (单选：单个选项ID，多选：选项ID集，空格隔开)
-   private String qroId;
+   private String qroIds;
    //回答文本的内容
    private String replyContent;
 
     public ReplyBean() {
     }
 
-    public ReplyBean(Integer replyId, AnswerBean answerBean, SurveyQuestionBean sqBean, String qroId, String replyContent) {
+    public ReplyBean(Integer replyId, AnswerBean answerBean, SurveyQuestionBean sqBean, String qroIds, String replyContent) {
         this.replyId = replyId;
         this.answerBean = answerBean;
         this.sqBean = sqBean;
-        this.qroId = qroId;
+        this.qroIds = qroIds;
         this.replyContent = replyContent;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ReplyBean replyBean = (ReplyBean) o;
-        return Objects.equals(replyId, replyBean.replyId) &&
-                Objects.equals(answerBean, replyBean.answerBean) &&
-                Objects.equals(sqBean, replyBean.sqBean) &&
-                Objects.equals(qroId, replyBean.qroId) &&
-                Objects.equals(replyContent, replyBean.replyContent);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(replyId, answerBean, sqBean, qroId, replyContent);
     }
 
     public Integer getReplyId() {
@@ -71,12 +53,12 @@ public class ReplyBean {
         this.sqBean = sqBean;
     }
 
-    public String getQroId() {
-        return qroId;
+    public String getQroIds() {
+        return qroIds;
     }
 
-    public void setQroId(String qroId) {
-        this.qroId = qroId;
+    public void setQroIds(String qroIds) {
+        this.qroIds = qroIds;
     }
 
     public String getReplyContent() {
@@ -85,5 +67,16 @@ public class ReplyBean {
 
     public void setReplyContent(String replyContent) {
         this.replyContent = replyContent;
+    }
+
+    @Override
+    public String toString() {
+        return "ReplyBean{" +
+                "replyId=" + replyId +
+                ", answerBean=" + answerBean +
+                ", sqBean=" + sqBean +
+                ", qroIds='" + qroIds + '\'' +
+                ", replyContent='" + replyContent + '\'' +
+                '}';
     }
 }

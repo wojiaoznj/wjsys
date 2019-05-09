@@ -20,7 +20,7 @@ import java.util.*;
  * @create 2018-12-27 8:34
  */
 @Controller
-@RequestMapping("/diagens/survey")
+@RequestMapping("/api/survey")
 public class SurveyController {
 
     @Autowired
@@ -57,7 +57,6 @@ public class SurveyController {
     public SurveyResult<String> insertSurvey(SurveyBean surveyBean) {
         try {
             surveyBean.getUserInfo().setUserId(API.USERID);
-            surveyBean.setCreateTime(new Date());
             return surveyService.insertSurvey(surveyBean);
         } catch (Exception e) {
             return new SurveyResult<String>(API.ERRORCODE, API.ERROR);

@@ -27,11 +27,13 @@ public class SurveyBean {
     private List<SurveyQuestionBean> questionBean=new ArrayList<>();
     //用户信息
     private UserInfoBean userInfo=new UserInfoBean();
+    //答卷信息
+    private List<AnswerBean> answerBeans=new ArrayList<>();
 
     public SurveyBean() {
     }
 
-    public SurveyBean(Integer surveyId, String surveyType, String surveyName, String surveyExplain, Date createTime, Integer surveyStatus, Integer questionNum, List<SurveyQuestionBean> questionBean, UserInfoBean userInfo) {
+    public SurveyBean(Integer surveyId, String surveyType, String surveyName, String surveyExplain, Date createTime, Integer surveyStatus, Integer questionNum, List<SurveyQuestionBean> questionBean, UserInfoBean userInfo, List<AnswerBean> answerBeans) {
         this.surveyId = surveyId;
         this.surveyType = surveyType;
         this.surveyName = surveyName;
@@ -41,6 +43,7 @@ public class SurveyBean {
         this.questionNum = questionNum;
         this.questionBean = questionBean;
         this.userInfo = userInfo;
+        this.answerBeans = answerBeans;
     }
 
     public Integer getSurveyId() {
@@ -115,6 +118,14 @@ public class SurveyBean {
         this.userInfo = userInfo;
     }
 
+    public List<AnswerBean> getAnswerBeans() {
+        return answerBeans;
+    }
+
+    public void setAnswerBeans(List<AnswerBean> answerBeans) {
+        this.answerBeans = answerBeans;
+    }
+
     @Override
     public String toString() {
         return "SurveyBean{" +
@@ -127,6 +138,7 @@ public class SurveyBean {
                 ", questionNum=" + questionNum +
                 ", questionBean=" + questionBean +
                 ", userInfo=" + userInfo +
+                ", answerBeans=" + answerBeans +
                 '}';
     }
 }

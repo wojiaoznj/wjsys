@@ -11,8 +11,8 @@
 
     <!-- 新增问卷-->
     <insert id="insertSurvey" useGeneratedKeys="true" parameterType="SurveyBean">
-        insert into survey (survey_type,survey_name,user_id,create_time)
-        VALUES(#{surveyType},#{surveyName},#{userInfo.userId},#{createTime})
+        insert into survey (survey_type,survey_name,user_id)
+        VALUES(#{surveyType},#{surveyName},#{userInfo.userId})
     </insert>
 
     <!-- 删除问卷 将问卷的状态修改为3 废弃状态-->
@@ -167,7 +167,7 @@
         qro.qro_id,qro.qro_content
         FROM survey s LEFT OUTER JOIN survey_question sq ON s.`survey_id`=sq.`survey_id`
                       LEFT OUTER JOIN question_reply_option qro ON sq.`question_id`=qro.`question_id`
-        WHERE s.`user_id`=#{userId} AND s.`survey_id`=#{surveyId}
+        WHERE s.`user_id`=#{userId} AND s.`survey_id`=#{surveyId} AND s.`survey_status`=1
     </select>
 
 
@@ -178,7 +178,7 @@
     </resultMap>
 
     <!-- 问卷和问卷题目以及题目回复选项-->
-    <resultMap id="surveyWithQuestionResult" type="getSurveyQuestionWithReply" autoMapping="true">
+    <resultMap id="surveyWithQuestionResult" type="SurveyQuestionBean" autoMapping="true">
         <association property="qro" javaType="QuestionReplyOptionBean"
                      autoMapping="true">
         </association>
